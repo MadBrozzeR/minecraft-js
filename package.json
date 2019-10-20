@@ -1,0 +1,32 @@
+{
+  "name": "minecraft-js",
+  "version": "1.0.0",
+  "description": "MineCraft JS learning platform",
+  "main": "index.js",
+  "dependencies": {
+    "mc-resource": "^1.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MadBrozzeR/minecraft-js.git"
+  },
+  "keywords": [
+    "minecraft",
+    "mc",
+    "gaming",
+    "geme",
+    "server",
+    "learn"
+  ],
+  "author": "MadBrozzeR",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MadBrozzeR/minecraft-js/issues"
+  },
+  "homepage": "https://github.com/MadBrozzeR/minecraft-js#readme"
+}
