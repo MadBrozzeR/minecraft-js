@@ -4,7 +4,7 @@
   "description": "MineCraft JS learning platform",
   "main": "index.js",
   "dependencies": {
-    "mc-resource": "^1.0.1"
+    "mc-resource": "^1.0.2"
   },
   "devDependencies": {},
   "scripts": {

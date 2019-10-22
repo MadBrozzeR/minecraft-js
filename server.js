@@ -1,6 +1,7 @@
 const MCRes = require('mc-resource');
 const fs = require('fs');
 const {spawn} = require('child_process');
+const net = require('net');
 
 const EULA = '#By changing the setting below to TRUE you are indicating your agreement to our EULA' +
   ' (https://account.mojang.com/documents/minecraft_eula).\n#${date}\neula=true\n'
@@ -28,6 +29,19 @@ function getVersions(count = Infinity, skip = 0, snaps = false) {
   return result;
 }
 
+function Progress (size) {
+  this.size = size;
+  process.stdout.write('0%');
+}
+Progress.prototype.update = function (size) {
+  process.stdout.clearLine();
+  process.stdout.cursorTo(0);
+  process.stdout.write(~~(size / this.size * 100) + '%');
+};
+Progress.prototype.done = function () {
+  process.stdout.write('\n');
+}
+
 function list ({count, skip, snaps}) {
   return new Promise(function (resolve, reject) {
     if (manifest) {
@@ -45,10 +59,23 @@ function list ({count, skip, snaps}) {
 }
 
 function installServer (version, path, resolve, reject) {
+  console.log('Downloading version list');
+
   MCRes.getVersion(version)
     .then(function (version) {
-      MCRes.download(version.downloads.server)
+      const artifact = version.downloads.server;
+
+      process.stdout.write('Downloading server v.' + version.id + '...\n');
+      const progress = new Progress(artifact.size);
+
+      MCRes.download(artifact, {
+        onProgress: function (bytes) {
+          progress.update(bytes);
+        }
+      })
         .then(function (data) {
+          progress.done();
+
           fs.writeFile(path + '/server.jar', data, function (error) {
             if (error) {
               reject(error);
@@ -64,6 +91,7 @@ function eulaAgreement (version, path, resolve, reject) {
   const eulaPath = path + '/eula.txt';
   fs.access(eulaPath, function (error) {
     if (error) {
+      console.log('EULA agreement acctpted');
       fs.writeFile(eulaPath, EULA.replace('${date}', new Date().toString()), function (error) {
         if (error) {
           reject(error);
@@ -81,6 +109,8 @@ function install (version, {path = DEFAULT_PATH} = {}) {
   return new Promise(function (resolve, reject) {
     fs.access(path, function (error) {
       if (error) {
+        console.log('Creating directory ' + path + '...');
+
         fs.mkdir(path, {recursive: true}, function (error) {
           if (error) {
             reject(error);
@@ -95,17 +125,58 @@ function install (version, {path = DEFAULT_PATH} = {}) {
   });
 }
 
-function start ({path = DEFAULT_PATH} = {}) {
-  const child = spawn('java', ['-Xms1G', '-Xmx4G', '-jar', 'server.jar', 'nogui'], {
+function checkInstallation ({path = DEFAULT_PATH} = {}) {
+  return new Promise(function (resolve, reject) {
+    fs.access(path + '/server.jar', function (error) {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+function start ({path = DEFAULT_PATH, java = 'java', port = 2038} = {}) {
+  const child = spawn(java, ['-Xms1G', '-Xmx4G', '-jar', 'server.jar', 'nogui'], {
     cwd: path
   });
   child.stdout.pipe(process.stdout);
   child.stderr.pipe(process.stderr);
   process.stdin.pipe(child.stdin);
+
+  const server = net.createServer().listen(port, function () {
+    console.log('Server started on port ' + port);
+  });
+
+  server.on('connection', function (socket) {
+    child.stdout.pipe(socket);
+    socket.pipe(child.stdin);
+    socket.on('end', function () {
+      child.stdout.unpipe(socket);
+      socket.unpipe();
+    });
+    socket.on('error', function (error) {
+      console.log(error);
+    });
+  });
+
+  child.on('close', function () {
+    server.close();
+  });
+
+  server.on('close', function () {
+    process.exit(0);
+  });
+
+  server.on('error', function (error) {
+    console.log(error);
+  });
 }
 
 module.exports = {
   list,
   install,
-  start
+  start,
+  checkInstallation
 };
