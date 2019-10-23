@@ -144,6 +144,9 @@ function start ({path = DEFAULT_PATH, java = 'java', port = 2038} = {}) {
   child.stdout.pipe(process.stdout);
   child.stderr.pipe(process.stderr);
   process.stdin.pipe(child.stdin);
+  child.stdin.on('error', function (error) {
+    console.log(error);
+  });
 
   const server = net.createServer().listen(port, function () {
     console.log('Server started on port ' + port);
@@ -151,10 +154,13 @@ function start ({path = DEFAULT_PATH, java = 'java', port = 2038} = {}) {
 
   server.on('connection', function (socket) {
     child.stdout.pipe(socket);
-    socket.pipe(child.stdin);
+    function onData (chunk) {
+      child.stdin.write(chunk);
+    }
+    socket.on('data', onData);
     socket.on('end', function () {
       child.stdout.unpipe(socket);
-      socket.unpipe();
+      socket.removeListener('data', onData);
     });
     socket.on('error', function (error) {
       console.log(error);
