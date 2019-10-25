@@ -1,17 +1,15 @@
 const { RConnect, print } = require('./client.js');
+const { player } = require('./lib/player.js');
+const { block } = require('./lib/block.js');
+const { gamerule } = require('./lib/utils.js');
 
-/*
-connect(function (socket) {
-  socket.write('time set 6000\n');
-  socket.write('gamerule doDaylightCycle false\n');
-  socket.write('weather clear\n');
-  socket.write('gamerule doWeatherCycle false\n');
-  socket.write('gamemode spectator madbrozzer\n');
-  socket.end();
-});
-*/
-
-RConnect(111, function (mc) {
+RConnect('111', function (mc) {
   mc.send('list').then(print);
+  gamerule(mc, {
+    doWeatherCycle: false,
+    doDaylightCycle: false
+  }).then(print);
+  mc.send('time set noon').then(print);
+
   mc.stop();
 });
