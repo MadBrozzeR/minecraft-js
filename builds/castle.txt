@@ -1,0 +1,87 @@
+0;0;1
+wwwwwwwww
+wfffffffw
+wfffffffw
+wfffffffw
+wfffffffw
+wfffffffw
+wfffffffw
+wfffffffw
+wwwwwwwww
+
+0;0;1
+wwwwwwwww
+w       w
+w       w
+w       w
+w       d
+w       w
+w       w
+w       w
+wwwwwwwww
+
+0;0;1
+wwowwwoww
+w       w
+o       o
+w       w
+w       D
+w       w
+o       o
+w       w
+wwowwwoww
+
+0;0;1
+wwowwwoww
+w       w
+o       o
+w       w
+w       w
+w       w
+o       o
+w       w
+wwowwwoww
+
+0;0;1
+wwwwwwwww
+w       w
+w       w
+w       w
+w       w
+w       w
+w       w
+w       w
+wwwwwwwww
+
+0;0;1
+wwwwwwwww
+wwwwwwwww
+wwwwwwwww
+wwwwwwwww
+wwwwwwwww
+wwwwwwwww
+wwwwwwwww
+wwwwwwwww
+wwwwwwwww
+
+0;0;1
+www   www
+w w   w w
+www   www
+         
+         
+         
+www   www
+w w   w w
+www   www
+
+0;0;1
+w w   w w
+         
+w w   w w
+         
+         
+         
+w w   w w
+         
+w w   w w

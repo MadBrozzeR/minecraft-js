@@ -3,8 +3,8 @@ const { RConnect, print } = require('./client.js');
 const { player } = require('./lib/player.js');
 const { gamerule } = require('./lib/utils.js');
 
-const palette = {
-  ' ': block('air'),
+const palete = {
+  ' ': block('lava'),
   w: block('stone_bricks'),
   f: block('acacia_planks'),
   o: block('glass'),
@@ -17,7 +17,7 @@ const palette = {
 RConnect('111', function (mc) {
   const madbrozzer = player('madbrozzer', mc);
 
-  madbrozzer.build('90 70 70', palette, './builds/castle.txt').then(function () {
+  madbrozzer.build('90 70 70', palete, './builds/castle.txt').then(function () {
     mc.stop();
   });
 });
