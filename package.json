@@ -4,6 +4,7 @@
   "description": "MineCraft JS learning platform",
   "main": "index.js",
   "dependencies": {
+    "madsocket": "^1.0.3",
     "mbr-rcon": "^1.0.3",
     "mc-resource": "^1.0.2"
   },
