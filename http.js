@@ -17,6 +17,9 @@ const BODY = `
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
 <style>
+body {
+  background: #002;
+}
 .picture {
   display: inline-block;
   width: 32px;
@@ -36,11 +39,15 @@ const BODY = `
   vertical-align: middle;
   font-size: 24px;
   margin-left: 10px;
+  color: #ddd;
 }
 
 #list {
   max-width: 600px;
   margin: 0 auto;
+}
+.list-item {
+  margin: 4px 0;
 }
 </style>
 <script>
@@ -63,6 +70,7 @@ function player (info) {
 }
 window.onload = function () {
   var list = document.getElementById('list');
+  var input = document.getElementById('message');
 
   var ws = new WebSocket('ws://192.168.1.201:8070/ws');
   ws.onmessage = function (event) {
@@ -73,10 +81,20 @@ window.onload = function () {
       list.appendChild(player(data[key]));
     }
   }
+
+  input.onkeypress = function (event) {
+    if (event.keyCode === 13) {
+      var message = input.value;
+      input.value = '';
+
+      ws.send(JSON.stringify({type: 'message', payload: message}));
+    }
+  }
 }
 </script>
 </head>
 <body>
+  <input style="width: 100%" id="message"/>
   <div id="list"></div>
 </body>
 </html>
@@ -141,6 +159,13 @@ Connect(function (mc) {
     },
     error: function (error) {
       console.log(error);
+    },
+    message: function (data) {
+      const message = JSON.parse(data);
+
+      if (message.type === 'message') {
+        mc.write(message.payload + '\n');
+      }
     }
   });
 

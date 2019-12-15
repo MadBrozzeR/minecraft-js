@@ -22,7 +22,7 @@ const walls = poll([
 
 const palette = {
   ' ': block('air'),
-  w: walls,
+  w: block('stone_bricks'),
   f: block('acacia_planks'),
   o: block('glass'),
   d: block('acacia_door', {half: 'lower', facing: 'west'}),
